@@ -13,12 +13,18 @@ nep_stopwrods = stopwords.words("nepali")
 
 
 def get_constants():
+    """
+    Returns the CONSTANTS json file which consists the values of parameters used in the model
+    """
     with codecs.open("../outputs/model 2/constants.json", encoding="utf-8") as const:
         CONSTANTS = json.load(const)
     return CONSTANTS
 
 
 def get_tokenizer():
+    """
+    Returns the tokenizer used in converting the text to sequence of numbers
+    """
     with codecs.open("../outputs/model 2/tokenizer.json", encoding="utf-8") as f:
         data = json.load(f)
         tokenizer = tf.keras.preprocessing.text.tokenizer_from_json(data)
@@ -26,6 +32,9 @@ def get_tokenizer():
 
 
 def get_cotegories():
+    """
+    Returns the json file which consits of numbers mapped to different catgeories
+    """
     with codecs.open("../outputs/model 2/categories.json", encoding="utf-8") as f:
         data = json.load(f)
     return data
@@ -65,6 +74,10 @@ def remove_emojis_english_and_numbers(data):
 
 
 def preprocess_text(data):
+    """
+    Cleans the given textual data
+    Removes special characters, english texts, numbers, and stopwords
+    """
     if type(data) == float:
         return data
     data = (
@@ -86,33 +99,45 @@ def preprocess_text(data):
         [char for char in no_emoji_english_numbers if char not in (string.punctuation)]
     )
     extra = " ".join(no_punc.split())
-    # Remove stopwords from title only
-    no_stopwords = [word for word in extra.split() if word.strip() not in nep_stopwrods]
+    no_num = "".join([char for char in extra if char not in "०१२३४५६७८९"])
+    no_stopwords = [
+        word.strip() for word in no_num.split() if word.strip() not in nep_stopwrods
+    ]
     return " ".join(no_stopwords)
 
 
+# Load the classifier model, tokenizer, categories and constants file
 model = tf.keras.models.load_model("../outputs/model 2/NepaliNewsClassifier")
 tokenizer = get_tokenizer()
 categories = get_cotegories()
 constants = get_constants()
 
+# Create title for Web App
 st.title("Nepali News Classifier")
 
+# Create text area to input the news
 input_news = st.text_area("Enter News: ")
 
 if st.button("Predict"):
 
+    # Clean the input news
     cleaned_news = preprocess_text(input_news)
 
+    # If the input news length is more than the length used to train the model, trim it
     if len(cleaned_news.split()) > constants["max_news_length"]:
         cleaned_news = " ".join(cleaned_news.split()[: constants["max_news_length"]])
 
+    # Convert text top sequences using the tokenizer
     cleaned_seq = tokenizer.texts_to_sequences([cleaned_news])
 
+    # Pad the number sequences if the length is less than the length of sequence used to train the model
     cleaned_pad_seq = tf.keras.preprocessing.sequence.pad_sequences(
         cleaned_seq, maxlen=constants["max_news_length"], padding="post"
     )
 
+    # Finally, use the model to generate a prediction
+    # The output of the model is probability distribution over different catgeoies
+    # Find the argmax of the distribution and use it to access the news catgeory from the categories.json file
     pred = np.argmax(model.predict([cleaned_pad_seq])[0])
     res = categories[str(pred)]
 

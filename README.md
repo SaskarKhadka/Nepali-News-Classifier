@@ -2,7 +2,7 @@
 
 In this project I experiment with Attentive Seq2Seq, Encoder Transformer(BERT) and some Machine Learning models to classify Nepali news articles
 
-Check out this <a href="report/Nepali News Classifier.pdf">document</a> to learn about the models
+Check out this <a href="report/Nepali News Classifier.pdf">document</a> to learn about this project
 
 ## Setup Instructions
 - Run the setup.sh script

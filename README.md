@@ -1,4 +1,22 @@
 # Nepali-News-Classifier
-A deep learning model to classify Nepali News Articles 
 
-Check out this <a href="model/Classification of Nepali News Articles.pdf">document</a> to learn about the models
+In this project I experiment with Attentive Seq2Seq, Encoder Transformer(BERT) and some Machine Learning models to classify Nepali news articles
+
+Check out this <a href="report/Classification of Nepali News Articles.pdf">document</a> to learn about the models
+
+## Setup Instructions
+- Run the setup.sh script
+    - `setup.sh`
+
+## Startup Instructions
+- Inside the project folder
+    - Create models and tokenizer folder
+        - `mkdir models`
+        - `mkdir tokenizer`
+
+    - Add weights of seq2seq and transformer models and the tokenizer to their respective folders
+        - Name of seq2seq model = seq2seq.weights.h5
+        - Name of Transformer model = transformer.weights.h5
+        - Tokenizer must have two files, summarization_50000.model, summarization_50000.vocab
+- Run start.sh
+    - `./start.sh`

@@ -1,5 +1,5 @@
 import streamlit as st
-from app.config import bert_config as bert, lstm_config as lstm, ml_config as ml
+from app.config import bert_config as bert, lstm_config as lstm, ml_config as ml, mlp_config as mlp
 from app.config.preprocess import perform_preprocessing
 import asyncio
 
@@ -27,6 +27,8 @@ async def main():
             st.write(f"###### **BERT:**&nbsp;&nbsp;&nbsp;{pred_bert}")
             pred_lstm = lstm.predict(lstm.model, lstm.tokenizer, lstm.label_encoder, st.session_state.news_input, lstm.parameters['MAX_NEWS_LENGTH'])
             st.write(f"###### **Bi-LSTM:**&nbsp;&nbsp;&nbsp;{pred_lstm}")
+            pred_lstm = mlp.predict(mlp.model, mlp.tokenizer, mlp.label_encoder, st.session_state.news_input, mlp.parameters['MAX_NEWS_LENGTH'])
+            st.write(f"###### **MLP:**&nbsp;&nbsp;&nbsp;{pred_lstm}")
             pred_nb = ml.predict(ml.naive_bayes_model, ml.tfidf, ml.label_encoder, st.session_state.news_input, lstm.parameters['MAX_NEWS_LENGTH'])
             st.write(f"###### **Naive Bayes:**&nbsp;&nbsp;&nbsp;{pred_nb}")
             pred_gb = ml.predict(ml.gradient_boosting_model, ml.tfidf, ml.label_encoder, st.session_state.news_input, lstm.parameters['MAX_NEWS_LENGTH'])
